@@ -24,4 +24,3 @@ restic_server_listen_port: 3000
 restic_server_tls_enable: false
 # restic_server_tls_cert:
 # restic_server_tls_key:
-

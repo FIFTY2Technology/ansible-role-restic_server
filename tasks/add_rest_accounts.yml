@@ -35,4 +35,3 @@
 
 - name: Ensure that rest-server loads the new .htpasswd file
   ansible.builtin.meta: flush_handlers
-

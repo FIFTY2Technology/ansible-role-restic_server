@@ -39,4 +39,3 @@
   changed_when: false
   when:
     - _restic_server_rest_binary.stat.exists
-

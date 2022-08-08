@@ -10,4 +10,3 @@
   notify:
     - reload systemd
     - restart rest-server
-

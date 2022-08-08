@@ -9,4 +9,3 @@
 - ansible.builtin.import_tasks: prepare_for_remote_clients.yml
 
 - ansible.builtin.import_tasks: add_rest_accounts.yml
-

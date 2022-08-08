@@ -69,4 +69,3 @@
     - restic-remote-exporter@.timer
   notify:
     - reload systemd
-

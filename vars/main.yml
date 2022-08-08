@@ -11,4 +11,3 @@ _restic_server_packages:
     - python3-bcrypt
 
 restic_server_packages: "{{ _restic_server_packages[ansible_os_family] }}"
-

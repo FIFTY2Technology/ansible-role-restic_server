@@ -115,4 +115,3 @@
   when:
     - ( not _restic_server_rest_binary.stat.exists ) or
       ( _restic_server_version_installed is version( _restic_server_version_available, '<' ) )
-
