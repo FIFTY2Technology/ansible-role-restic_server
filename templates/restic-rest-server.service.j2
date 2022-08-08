@@ -1,0 +1,42 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=REST server for restic backup
+Documentation=https://github.com/restic/rest-server/blob/master/README.md
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=rest-server
+Group=rest-server
+ExecStart=/usr/local/bin/rest-server \
+		  --path {{ restic_server_backup_path }} \
+		  --listen {{ restic_server_listen_address }}:{{ restic_server_listen_port }} \
+{% if restic_server_tls_enable %}
+		  --tls \
+		  --tls-cert {{ restic_server_tls_cert }} \
+		  --tls-key {{ restic_server_tls_key }} \
+{% endif %}
+		  --private-repos \
+		  --prometheus
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=5
+
+# Optional security enhancements
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+{# In case nothing (including certs) is stored in the users home directory, #}
+{# this can be set to 'yes' #}
+ProtectHome=yes
+ReadWritePaths={{ restic_server_backup_path }}
+{# If TLS is enabled, allow rest-server to read the path where the certificate #}
+{# and key are stored. Certificate and key must be in the same directory. #}
+{% if restic_server_tls_enable %}
+ReadOnlyPaths={{ restic_server_tls_cert | dirname }}
+{% endif %}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+---
+
+_restic_server_packages:
+  Debian:
+    - apache2-utils
+    - python3-passlib
+    - python3-bcrypt
+  RedHat:
+    - httpd-tools
+    - python3-passlib
+    - python3-bcrypt
+
+restic_server_packages: "{{ _restic_server_packages[ansible_os_family] }}"
+

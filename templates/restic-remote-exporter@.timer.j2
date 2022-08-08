@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=restic remote exporter of backup statistics on %i daily
+
+###
+# Fire once a day.
+# When exactly during this hour a host runs this timer is randomized in order to
+# prevent flooding the backup server on the hour.
+###
+[Timer]
+OnCalendar=*-*-* 06:00:00
+RandomizedDelaySec=3600
+FixedRandomDelay=true
+Persistent=true
+
+[Install]
+WantedBy=timers.target

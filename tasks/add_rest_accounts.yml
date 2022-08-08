@@ -1,0 +1,38 @@
+---
+
+###
+# 'PASSWORD_STORE_DIR' is only required for the 'fileglob' loop to glob over the
+# correct directory.
+###
+- name: Get directory location of password-store
+  ansible.builtin.set_fact:  # noqa var-naming
+    PASSWORD_STORE_DIR: "{{ lookup('env', 'PASSWORD_STORE_DIR') | default('~/.password-store', true) }}"
+
+###
+# This tasks file ensures all auth credentials in the password-store are also
+# present in the backup servers '.htpasswd' file.
+# NOTE: Creating such credentials is the concern of the 'restic_client' role
+# (for automatically installed backup clients).
+# For machines, we use the clients hostname as username for authentication, but
+# the .htpasswd file specification does not allow dots in usernames, therefore
+# we change them to '_' here.
+# Ref: https://httpd.apache.org/docs/2.4/programs/htpasswd.html#restrictions
+###
+- name: Add rest-server accounts
+  community.general.htpasswd:
+    path: "{{ restic_server_backup_path }}/.htpasswd"
+    name: "{{ item | basename | splitext | first | regex_replace('\\.', '_') }}"
+    password: "{{ lookup('passwordstore', 'IT/backup/auth/' + item | basename | splitext | first) }}"
+    crypt_scheme: bcrypt
+    state: present
+    owner: "{{ restic_server_user }}"
+    group: "{{ restic_server_group }}"
+    mode: '0600'
+  loop: "{{ lookup('fileglob', PASSWORD_STORE_DIR + '/IT/backup/auth/*', wantlist=true) }}"
+  loop_control:
+    label: "{{ item | basename | splitext | first | regex_replace('\\.', '_') }}"
+  notify: reload rest-server
+
+- name: Ensure that rest-server loads the new .htpasswd file
+  ansible.builtin.meta: flush_handlers
+

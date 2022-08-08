@@ -1,0 +1,118 @@
+---
+
+###
+# Package 'apache2-utils' includes htpasswd, required to create new REST users.
+# Package 'python3-passlib' is required for the 'htpasswd' module, when the Ansible
+# controller creates a password on the destination host.
+###
+- name: Update package cache (Debian)
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+  when:
+    - "ansible_os_family == 'Debian'"
+
+###
+# See 'vars/main.yml' for package selection.
+###
+- name: Install packages for rest-server
+  ansible.builtin.package:
+    name: "{{ restic_server_packages }}"
+    state: present
+
+- name: Get current version from GitHub and compare it with locally installed version
+  block:
+    - name: Get latest release of rest-server
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/restic/rest-server/releases/latest"
+        method: GET
+        return_content: true
+        status_code: 200
+        body_format: json
+      register: _latest_release
+      until: _latest_release.status == 200
+      retries: 3
+      delay: 5
+      changed_when: false
+
+    - name: Set rest-server version to {{ _latest_release.json.tag_name[1:] }}
+      ansible.builtin.set_fact:
+        _restic_server_version_available: "{{ _latest_release.json.tag_name[1:] }}"
+
+    - name: Set version number of version installed
+      ansible.builtin.set_fact:
+        _restic_server_version_installed: "{{ _raw_restic_server_version_installed.stdout.split(' ')[3] }}"
+      when:
+        - _restic_server_rest_binary.stat.exists
+
+    ###
+    # Only actually print this if rest-server is already installed. Else, the
+    # '_restic_server_version_installed' variable is not defined (or doesn't
+    # include a 'stdout' part).
+    ###
+    - name: Print version comparison between available and installed version of rest-server
+      ansible.builtin.debug:
+        msg:
+          - "Found latest version: {{ _restic_server_version_available }}"
+          - "Installed version is: {{ _restic_server_version_installed }}"
+      when:
+        - _restic_server_rest_binary.stat.exists
+  delegate_to: localhost
+  become: false
+
+###
+# The block is only run when there was no existing binary found on the target or
+# a new version was found on GitHub (see 'when' statement at the end of this block).
+# Since multiple 'when' conditions are combined with a logical 'and', this got a
+# bit ugly..
+###
+- name: Download, checksum and unpack 'rest-server' from GitHub
+  block:
+    - name: Get checksum list
+      ansible.builtin.set_fact:
+        _restic_server_rest_checksums: "{{ lookup('url', 'https://github.com/restic/rest-server/releases/download/v' + _restic_server_version_available + '/SHA256SUMS', wantlist=True) | list }}"
+      run_once: true
+
+    - name: Filter for checksum of amd64 architecture
+      ansible.builtin.set_fact:
+        _restic_server_rest_checksum: "{{ item.split(' ')[0] }}"
+      with_items: "{{ _restic_server_rest_checksums }}"
+      when:
+        - "'linux_amd64.tar.gz'in item"
+
+    - name: Download latest rest-server binary from GitHub
+      ansible.builtin.get_url:
+        url: "https://github.com/restic/rest-server/releases/download/v{{ _restic_server_version_available }}/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
+        dest: "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
+        checksum: "sha256:{{ _restic_server_rest_checksum }}"
+        mode: '0640'
+      register: _download_archive
+      until: _download_archive is succeeded
+      retries: 3
+      delay: 5
+      notify: Clean up temporary downloads
+
+    - name: Unpack rest-server archive
+      ansible.builtin.unarchive:
+        src: "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
+        dest: /tmp
+        mode: '0755'
+      notify: Clean up temporary downloads
+  delegate_to: localhost
+  become: false
+  when:
+    - ( not _restic_server_rest_binary.stat.exists ) or
+      ( _restic_server_version_installed is version( _restic_server_version_available, '<' ) )
+
+- name: Move rest-server binary into place
+  ansible.builtin.copy:
+    src: "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64/rest-server"
+    dest: /usr/local/bin/rest-server
+    owner: root
+    group: rest-server
+    mode: '0750'
+  notify: restart rest-server
+  when:
+    - ( not _restic_server_rest_binary.stat.exists ) or
+      ( _restic_server_version_installed is version( _restic_server_version_available, '<' ) )
+

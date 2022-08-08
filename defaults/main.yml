@@ -1,0 +1,27 @@
+---
+
+###
+# User and group to run 'rest-server' as. Will also own 'restic_server_backup_path'.
+###
+restic_server_user: rest-server
+restic_server_group: rest-server
+
+###
+# The destination path to store incoming backups and the '.htaccess' file.
+###
+restic_server_backup_path: /opt/restic
+
+###
+# The default address and port for rest-server to listen for incoming clients
+###
+restic_server_listen_address: 0.0.0.0
+restic_server_listen_port: 3000
+
+###
+# If TLS is enabled, also specify the paths below.
+# Absolute path to TLS certificate and key.
+###
+restic_server_tls_enable: false
+# restic_server_tls_cert:
+# restic_server_tls_key:
+

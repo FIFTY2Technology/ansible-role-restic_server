@@ -1,0 +1,28 @@
+---
+
+- name: Clean up temporary downloads
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  delegate_to: localhost
+  become: false
+  loop:
+    - "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
+    - "/tmp/rest-server_{{ _restic_server_version_available }}/"
+
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon-reload: true
+
+- name: reload rest-server
+  ansible.builtin.systemd:
+    name: restic-rest-server
+    enabled: true
+    state: reloaded
+
+- name: restart rest-server
+  ansible.builtin.systemd:
+    name: restic-rest-server
+    enabled: true
+    state: restarted
+

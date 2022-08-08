@@ -1,0 +1,72 @@
+---
+
+- name: Create '.ssh/' folder for the user initiating the connection for remote backups on the backup server
+  ansible.builtin.file:
+    path: "/home/{{ restic_server_user }}/.ssh/"
+    state: directory
+    owner: "{{ restic_server_user }}"
+    group: "{{ restic_server_group }}"
+    mode: '0700'
+  become: true
+
+###
+# Make sure the backup server is prepared to connect to remote clients
+# This key is later read from the 'restic_remote_server_authorized_key' variable
+# by the 'restic_remote' role for clients to store it in their '.ssh/authorized_keys',
+# so that remote clients allow incoming SSH connections by the backup server.
+# See this role's and the 'restic_remote' role's README files for more infos.
+###
+- name: Create an SSH keypair on the server
+  community.crypto.openssh_keypair:
+    path: "/home/{{ restic_server_user }}/.ssh/id_ed25519"
+    comment: "{{ restic_server_user }}@{{ backup_server }}"
+    type: ed25519
+    owner: "{{ restic_server_user }}"
+    group: "{{ restic_server_group }}"
+  become: true
+  register: _server_ssh_key
+
+###
+# This is the tasks that is referenced in the README
+###
+- name: Print SSH public key - See README file for usage of this key
+  ansible.builtin.debug:
+    msg: "{{ _server_ssh_key.public_key }} {{ _server_ssh_key.comment }}"
+
+###
+# To let different hosts (clients) have distinct usernames to connect as (from
+# server to client), this folder will provide an 'EnvironmentFile' for each
+# remote host with the respective SSH user. Variables will be consumed by all
+# systemd services starting with 'restic-remote-'. The exact behaviour for
+# loading '.conf' files is described here (although we manually load '.env'
+# files instead), search for 'drop-in':
+# https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description
+# See 'restic_remote' role, 'tasks/configure_server.yml', for counter part.
+###
+- name: Create directory for host-specific overrides of templated systemd service
+  ansible.builtin.file:
+    path: /etc/systemd/system/restic-remote-@.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
+- name: Create systemd service template for remote backup, -prune and -exporter
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  loop:
+    - restic-remote-backup@.service
+    - restic-remote-backup@.timer
+    - restic-remote-prune@.service
+    - restic-remote-prune@.timer
+    - restic-remote-exporter@.service
+    - restic-remote-exporter@.timer
+  notify:
+    - reload systemd
+
