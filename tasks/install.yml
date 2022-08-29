@@ -39,11 +39,29 @@
       ansible.builtin.set_fact:
         _restic_server_version_available: "{{ _latest_release.json.tag_name[1:] }}"
 
+###
+# Creates a disabled user account (disabled: can't login via shell)
+###
+- name: Create backup user
+  ansible.builtin.user:
+    name: rest-server
+    password: '*'
+    shell: /usr/sbin/nologin
+    state: present
+
     - name: Set version number of version installed
       ansible.builtin.set_fact:
         _restic_server_version_installed: "{{ _raw_restic_server_version_installed.stdout.split(' ')[3] }}"
       when:
         - _restic_server_rest_binary.stat.exists
+
+- name: Create directory for backups
+  ansible.builtin.file:
+    path: "{{ restic_server_backup_path }}"
+    owner: "{{ restic_server_user }}"
+    group: "{{ restic_server_group }}"
+    mode: '0700'
+    state: directory
 
     ###
     # Only actually print this if rest-server is already installed. Else, the
