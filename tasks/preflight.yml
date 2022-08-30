@@ -49,3 +49,11 @@
   when:
     - restic_server_binary_install_dir | length == 0
     - restic_server_version == 'latest'
+
+- name: Update package cache (Debian)
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+  become: true
+  when:
+    - "ansible_os_family == 'Debian'"

@@ -1,5 +1,10 @@
 ---
 
+###
+# Package 'apache2-utils' includes htpasswd, required to create new REST users.
+# Package 'python3-passlib' is required for the 'htpasswd' module, when the Ansible
+# controller creates a password on the destination host.
+###
 _restic_server_packages:
   Debian:
     - apache2-utils
