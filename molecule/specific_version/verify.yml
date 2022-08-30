@@ -5,6 +5,16 @@
   hosts: all
   gather_facts: false
   tasks:
-  - name: Example assertion
+  - name: Get rest-server version output
+    ansible.builtin.command:
+      cmd: /usr/local/bin/rest-server --version
+    register: _version_output
+
+  ###
+  # Take care, '--version' output changed with rest-server version 0.11.0, it
+  # would be "split(' ')[3]" then.
+  ###
+  - name: Assert correct output
     ansible.builtin.assert:
-      that: true
+      that:
+        - "_version_output.stdout.split(' ')[1] == '0.10.0'"
