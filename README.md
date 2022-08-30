@@ -22,6 +22,7 @@ All variables which can be overridden are stored in defaults/main.yml file as we
 | `restic_server_user` | rest-server | User to run 'rest-server' as. Will also own `restic_server_backup_path` |
 | `restic_server_group` | rest-server | Group to run 'rest-server' as. Will also own `restic_server_backup_path` |
 | `restic_server_backup_path` | /opt/restic | The directory to store all encrypted backups and the `.htaccess` file. |
+| `restic_server_binary_install_dir` | "" | Provide a full path to a local directory (on the Ansible controller) where the `rest-server` binary is available, e.g. for deploying self-compiled versions. Binary must be named 'rest-server' inside this directory. |
 | `restic_server_listen_address` | 0.0.0.0 | The default address for rest-server to listen for incoming clients |
 | `restic_server_listen_port` | 3000 | The default port for rest-server to listen for incoming clients |
 | `restic_server_tls_enable` | false | Wheather to enable TLS support or not (default: not) |
@@ -37,7 +38,6 @@ Built for `rest-server` version `0.10.0` and above (relies on the `--version` op
 ```
 - hosts: backupservers
   gather_facts: true
-  become: true
 
   roles:
   - role: restic_server
@@ -46,7 +46,6 @@ Built for `rest-server` version `0.10.0` and above (relies on the `--version` op
 ```
 - hosts: backupservers
   gather_facts: true
-  become: true
 
   vars:
     restic_server_tls_enable: true

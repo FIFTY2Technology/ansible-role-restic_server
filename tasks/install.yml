@@ -77,6 +77,20 @@
         - _restic_server_rest_binary.stat.exists
   delegate_to: localhost
   become: false
+###
+# Install from local
+###
+- name: Install rest-server from locally provided directory
+  ansible.builtin.copy:
+    src: "{{ restic_server_binary_install_dir }}/rest-server"
+    dest: /usr/local/bin/rest-server
+    owner: root
+    group: rest-server
+    mode: '0750'
+  become: true
+  notify: restart rest-server
+  when:
+    - restic_server_binary_install_dir | length > 0
 
 ###
 # The block is only run when there was no existing binary found on the target or
@@ -119,6 +133,8 @@
   delegate_to: localhost
   vars:
     _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
+  when:
+    - restic_server_binary_install_dir | length == 0
 
 - name: Move rest-server binary into place
   ansible.builtin.copy:
@@ -131,3 +147,5 @@
   notify: restart rest-server
   vars:
     _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
+  when:
+    - restic_server_binary_install_dir | length == 0
