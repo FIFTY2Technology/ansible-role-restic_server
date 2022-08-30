@@ -8,25 +8,6 @@
     name: "{{ restic_server_packages }}"
     state: present
 
-- name: Get current version from GitHub and compare it with locally installed version
-  block:
-    - name: Get latest release of rest-server
-      ansible.builtin.uri:
-        url: "https://api.github.com/repos/restic/rest-server/releases/latest"
-        method: GET
-        return_content: true
-        status_code: 200
-        body_format: json
-      register: _latest_release
-      until: _latest_release.status == 200
-      retries: 3
-      delay: 5
-      changed_when: false
-
-    - name: Set rest-server version to {{ _latest_release.json.tag_name[1:] }}
-      ansible.builtin.set_fact:
-        _restic_server_version_available: "{{ _latest_release.json.tag_name[1:] }}"
-
 ###
 # Creates a disabled user account (disabled: can't login via shell)
 ###
@@ -37,12 +18,6 @@
     shell: /usr/sbin/nologin
     state: present
 
-    - name: Set version number of version installed
-      ansible.builtin.set_fact:
-        _restic_server_version_installed: "{{ _raw_restic_server_version_installed.stdout.split(' ')[3] }}"
-      when:
-        - _restic_server_rest_binary.stat.exists
-
 - name: Create directory for backups
   ansible.builtin.file:
     path: "{{ restic_server_backup_path }}"
@@ -51,20 +26,6 @@
     mode: '0700'
     state: directory
 
-    ###
-    # Only actually print this if rest-server is already installed. Else, the
-    # '_restic_server_version_installed' variable is not defined (or doesn't
-    # include a 'stdout' part).
-    ###
-    - name: Print version comparison between available and installed version of rest-server
-      ansible.builtin.debug:
-        msg:
-          - "Found latest version: {{ _restic_server_version_available }}"
-          - "Installed version is: {{ _restic_server_version_installed }}"
-      when:
-        - _restic_server_rest_binary.stat.exists
-  delegate_to: localhost
-  become: false
 ###
 # Install from local
 ###
@@ -81,10 +42,7 @@
     - restic_server_binary_install_dir | length > 0
 
 ###
-# The block is only run when there was no existing binary found on the target or
-# a new version was found on GitHub (see 'when' statement at the end of this block).
-# Since multiple 'when' conditions are combined with a logical 'and', this got a
-# bit ugly..
+# Install directly from GitHub
 ###
 - name: Download, checksum and unpack 'rest-server' from GitHub
   block:

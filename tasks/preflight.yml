@@ -5,23 +5,6 @@
     that: ansible_service_mgr == 'systemd'
     msg: "This module only works with systemd"
 
-- name: Check for existing rest-server installation
-  ansible.builtin.stat:
-    path: /usr/local/bin/rest-server
-  register: _restic_server_rest_binary
-
-###
-# This assumes at least rest-server version 0.10.0 (current version as of
-# writing this), since older versions don't have a '--version' knob.
-###
-- name: Get version of currently installed rest-server version
-  ansible.builtin.command:
-    cmd: /usr/local/bin/rest-server --version
-  register: _raw_restic_server_version_installed
-  changed_when: false
-  when:
-    - _restic_server_rest_binary.stat.exists
-
 ###
 # Only if 'restic_server_version' is set to "latest".
 # Inspired by cloudalchemy.prometheus role.
