@@ -1,0 +1,36 @@
+---
+
+- name: Prepare
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Force update package cache (Debian)
+      ansible.builtin.apt:
+        update_cache: true
+      become: true
+      when:
+        - "ansible_os_family == 'Debian'"
+
+    ###
+    # Fake an installation from a local directory
+    ###
+    - name: Download a version to install to the Ansible controller
+      ansible.builtin.get_url:
+        url: "https://github.com/restic/rest-server/releases/download/v0.11.0/rest-server_0.11.0_linux_amd64.tar.gz"
+        dest: /tmp/rest-server_0.11.0_linux_amd64.tar.gz
+        mode: '0640'
+      register: _molecule_download_archive
+      until: _molecule_download_archive is succeeded
+      retries: 3
+      delay: 5
+      delegate_to: localhost
+
+    - name: Unpack rest-server archive
+      ansible.builtin.unarchive:
+        src: /tmp/rest-server_0.11.0_linux_amd64.tar.gz
+        dest: /tmp
+        mode: '0755'
+        extra_opts:
+          - --strip-components=1
+      delegate_to: localhost

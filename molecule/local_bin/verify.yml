@@ -1,0 +1,24 @@
+---
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+
+  tasks:
+  - name: Get file hash of local binary
+    ansible.builtin.stat:
+      path: /tmp/rest-server
+      checksum_algorithm: sha256
+    register: _molecule_local_bin
+    delegate_to: localhost
+
+  - name: Get file hash of remote binary
+    ansible.builtin.stat:
+      path: /usr/local/bin/rest-server
+      checksum_algorithm: sha256
+    register: _molecule_remote_bin
+
+  - name: Assert that file hashes are identical
+    ansible.builtin.assert:
+      that:
+        - _molecule_local_bin.stat.checksum == _molecule_remote_bin.stat.checksum

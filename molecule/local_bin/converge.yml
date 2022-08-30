@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+
+  vars:
+    backup_server: "{{ inventory_hostname }}"
+    restic_server_local_bin_dir: /tmp
+
+  tasks:
+    - name: "Include fifty2technology.restic_server"
+      ansible.builtin.include_role:
+        name: "fifty2technology.restic_server"
