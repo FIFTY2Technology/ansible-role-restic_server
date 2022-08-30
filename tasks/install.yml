@@ -88,7 +88,7 @@
   block:
     - name: Get checksum list
       ansible.builtin.set_fact:
-        _restic_server_rest_checksums: "{{ lookup('url', 'https://github.com/restic/rest-server/releases/download/v' + _restic_server_version_available + '/SHA256SUMS', wantlist=True) | list }}"
+        _restic_server_rest_checksums: "{{ lookup('url', 'https://github.com/restic/rest-server/releases/download/v' + _version + '/SHA256SUMS', wantlist=True) | list }}"
       run_once: true
 
     - name: Filter for checksum of amd64 architecture
@@ -98,10 +98,10 @@
       when:
         - "'linux_amd64.tar.gz'in item"
 
-    - name: Download latest rest-server binary from GitHub
+    - name: Download rest-server version {{ _version }} binary from GitHub
       ansible.builtin.get_url:
-        url: "https://github.com/restic/rest-server/releases/download/v{{ _restic_server_version_available }}/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
-        dest: "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
+        url: "https://github.com/restic/rest-server/releases/download/v{{ _version }}/rest-server_{{ _version }}_linux_amd64.tar.gz"
+        dest: "/tmp/rest-server_{{ _version }}_linux_amd64.tar.gz"
         checksum: "sha256:{{ _restic_server_rest_checksum }}"
         mode: '0640'
       register: _download_archive
@@ -112,24 +112,22 @@
 
     - name: Unpack rest-server archive
       ansible.builtin.unarchive:
-        src: "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
+        src: "/tmp/rest-server_{{ _version }}_linux_amd64.tar.gz"
         dest: /tmp
         mode: '0755'
       notify: Clean up temporary downloads
   delegate_to: localhost
-  become: false
-  when:
-    - ( not _restic_server_rest_binary.stat.exists ) or
-      ( _restic_server_version_installed is version( _restic_server_version_available, '<' ) )
+  vars:
+    _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
 
 - name: Move rest-server binary into place
   ansible.builtin.copy:
-    src: "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64/rest-server"
+    src: "/tmp/rest-server_{{ _version }}_linux_amd64/rest-server"
     dest: /usr/local/bin/rest-server
     owner: root
     group: rest-server
     mode: '0750'
+  become: true
   notify: restart rest-server
-  when:
-    - ( not _restic_server_rest_binary.stat.exists ) or
-      ( _restic_server_version_installed is version( _restic_server_version_available, '<' ) )
+  vars:
+    _version: "{{ _restic_server_version_available | default(restic_server_version) }}"

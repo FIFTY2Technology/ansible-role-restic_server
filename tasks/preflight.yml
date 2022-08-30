@@ -21,3 +21,30 @@
   changed_when: false
   when:
     - _restic_server_rest_binary.stat.exists
+
+###
+# Only if 'restic_server_version' is set to "latest".
+# Inspired by cloudalchemy.prometheus role.
+###
+- name: Get current version from GitHub
+  block:
+    - name: Get latest release of rest-server
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/restic/rest-server/releases/latest"
+        method: GET
+        return_content: true
+        status_code: 200
+        body_format: json
+      register: _latest_release
+      until: _latest_release.status == 200
+      retries: 3
+      delay: 5
+      changed_when: false
+      delegate_to: localhost
+      become: false
+
+    - name: Extract latest version number from GitHub API response
+      ansible.builtin.set_fact:
+        _restic_server_version_available: "{{ _latest_release.json.tag_name[1:] }}"
+  when:
+    - restic_server_version == 'latest'

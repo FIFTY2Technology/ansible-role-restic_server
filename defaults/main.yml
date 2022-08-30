@@ -7,6 +7,14 @@ restic_server_user: rest-server
 restic_server_group: rest-server
 
 ###
+# Specify a release version to download from GitHub. Release versions must not
+# include the leading 'v' as tagged on GitHub. E.g. '0.10.0'.
+# See: https://github.com/restic/rest-server/releases
+# Default: 'latest'
+###
+restic_server_version: latest
+
+###
 # The destination path to store incoming backups and the '.htaccess' file.
 ###
 restic_server_backup_path: /opt/restic
