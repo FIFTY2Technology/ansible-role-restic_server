@@ -14,7 +14,7 @@ platforms:
 # * rockylinux8 - Rocky Linux 8 Green Obsidian
 # * rockylinux9 - Rocky Linux 9 Blue Onyx
 ###
-  - name: restic_server_${MOLECULE_DISTRO:-debian11}-default
+  - name: restic_server_${MOLECULE_DISTRO:-debian11}-local_bin
     image: geerlingguy/docker-${MOLECULE_DISTRO:-debian11}-ansible:latest
     command: /sbin/init
     tmpfs:
@@ -27,4 +27,4 @@ provisioner:
 verifier:
   name: ansible
 scenario:
-  name: default
+  name: local_bin
