@@ -8,4 +8,4 @@
   tasks:
     - name: "Include ansible-role-restic_server"
       ansible.builtin.include_role:
-        name: "ansible-role-restic_server"
+        name: "fifty2technology.restic_server"

@@ -5,13 +5,16 @@ _restic_server_packages:
     - apache2-utils
     - python3-passlib
     - python3-bcrypt
+    - openssh-client
   RedHat-8:
     - httpd-tools
     - python3-bcrypt
     - python3-passlib
+    - openssh
   RedHat-9:
     - httpd-tools
     - python3-bcrypt
     - python3-radicale3  # (temporary) replacement for python3-passlib package.
+    - openssh
 
 restic_server_packages: "{{ _restic_server_packages[ansible_os_family ~ '-' ~ ansible_distribution_major_version] | default ( _restic_server_packages[ansible_os_family] ) }}"
