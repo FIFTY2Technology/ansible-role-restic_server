@@ -33,5 +33,5 @@
     label: "{{ item | basename | splitext | first | regex_replace('\\.', '_') }}"
   notify: reload rest-server
 
-- name: Ensure that rest-server loads the new .htpasswd file
-  ansible.builtin.meta: flush_handlers
+#- name: Ensure that rest-server loads the new .htpasswd file
+#  ansible.builtin.meta: flush_handlers
