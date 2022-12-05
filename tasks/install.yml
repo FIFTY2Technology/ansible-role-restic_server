@@ -65,6 +65,7 @@
         checksum: "sha256:{{ _restic_server_rest_checksum }}"
         mode: '0640'
       register: _download_archive
+      changed_when: false
       until: _download_archive is succeeded
       retries: 3
       delay: 5
