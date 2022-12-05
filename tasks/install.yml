@@ -37,7 +37,7 @@
     group: rest-server
     mode: '0750'
   become: true
-  notify: restart rest-server
+  notify: Restart rest-server
   when:
     - restic_server_binary_install_dir | length > 0
 
@@ -58,7 +58,7 @@
       when:
         - "'linux_amd64.tar.gz'in item"
 
-    - name: Download rest-server version {{ _version }} binary from GitHub
+    - name: Download rest-server binary from GitHub - version {{ _version }}
       ansible.builtin.get_url:
         url: "https://github.com/restic/rest-server/releases/download/v{{ _version }}/rest-server_{{ _version }}_linux_amd64.tar.gz"
         dest: "/tmp/rest-server_{{ _version }}_linux_amd64.tar.gz"
@@ -90,7 +90,7 @@
     group: rest-server
     mode: '0750'
   become: true
-  notify: restart rest-server
+  notify: Restart rest-server
   vars:
     _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
   when:

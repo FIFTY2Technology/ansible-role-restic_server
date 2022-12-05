@@ -10,17 +10,17 @@
     - "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
     - "/tmp/rest-server_{{ _restic_server_version_available }}/"
 
-- name: reload systemd
+- name: Reload systemd
   ansible.builtin.systemd:
     daemon-reload: true
 
-- name: reload rest-server
+- name: Reload rest-server
   ansible.builtin.systemd:
     name: restic-rest-server
     enabled: true
     state: reloaded
 
-- name: restart rest-server
+- name: Restart rest-server
   ansible.builtin.systemd:
     name: restic-rest-server
     enabled: true
