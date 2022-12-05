@@ -17,6 +17,10 @@
 # the .htpasswd file specification does not allow dots in usernames, therefore
 # we change them to '_' here.
 # Ref: https://httpd.apache.org/docs/2.4/programs/htpasswd.html#restrictions
+#
+# For quicker 'molecule' tests with a lot of REST accounts, apply:
+# -  loop: "{{ lookup('fileglob', PASSWORD_STORE_DIR + '/IT/backup/auth/*', wantlist=true) }}"
+# +  loop: "{{ lookup('fileglob', PASSWORD_STORE_DIR + '/IT/backup/auth/a*', wantlist=true) }}"
 ###
 - name: Add rest-server accounts
   community.general.htpasswd:
