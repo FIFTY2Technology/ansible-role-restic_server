@@ -87,6 +87,7 @@
         mode: '0755'
       notify: Clean up temporary downloads
   delegate_to: localhost
+  run_once: true
   vars:
     _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
   when:
