@@ -7,8 +7,10 @@
   delegate_to: localhost
   become: false
   loop:
-    - "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
-    - "/tmp/rest-server_{{ _restic_server_version_available }}/"
+    - "/tmp/rest-server_{{ _version }}_linux_amd64.tar.gz"
+    - "/tmp/rest-server_{{ _version }}_linux_amd64/"
+  vars:
+    _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
 
 - name: reload systemd
   ansible.builtin.systemd:
