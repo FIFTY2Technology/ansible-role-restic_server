@@ -5,9 +5,12 @@
     path: "{{ item }}"
     state: absent
   delegate_to: localhost
+  run_once: true
   loop:
-    - "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64.tar.gz"
-    - "/tmp/rest-server_{{ _restic_server_version_available }}_linux_amd64/"
+    - "/tmp/rest-server_{{ _version }}_linux_amd64.tar.gz"
+    - "/tmp/rest-server_{{ _version }}_linux_amd64/"
+  vars:
+    _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
 
 - name: Reload systemd
   ansible.builtin.systemd:

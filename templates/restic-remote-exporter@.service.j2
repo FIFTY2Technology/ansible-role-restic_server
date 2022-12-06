@@ -6,8 +6,8 @@ After=network.target
 
 [Service]
 # 'User' must be 'rest-server' since it holds the SSH known_hosts
-User=rest-server
-Group=rest-server
+User={{ restic_server_user }}
+Group={{ restic_server_group }}
 EnvironmentFile=/etc/systemd/system/restic-remote-@.service.d/defaults.env
 EnvironmentFile=/etc/systemd/system/restic-remote-@.service.d/%i.env
 ExecStart=/usr/bin/ssh \

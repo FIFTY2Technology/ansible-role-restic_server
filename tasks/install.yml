@@ -9,11 +9,21 @@
     state: present
 
 ###
+# Group does not get created with user creation in all distributions automatically
+###
+- name: Create backup group
+  ansible.builtin.group:
+    name: "{{ restic_server_group }}"
+    system: true
+    state: present
+
+###
 # Creates a disabled user account (disabled: can't login via shell)
 ###
 - name: Create backup user
   ansible.builtin.user:
-    name: rest-server
+    name: "{{ restic_server_user }}"
+    group: "{{ restic_server_group }}"
     password: '*'
     shell: /usr/sbin/nologin
     state: present
@@ -34,7 +44,7 @@
     src: "{{ restic_server_binary_install_dir }}/rest-server"
     dest: /usr/local/bin/rest-server
     owner: root
-    group: rest-server
+    group: "{{ restic_server_group }}"
     mode: '0750'
   become: true
   notify: Restart rest-server
@@ -78,6 +88,7 @@
         mode: '0755'
       notify: Clean up temporary downloads
   delegate_to: localhost
+  run_once: true
   vars:
     _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
   when:
@@ -88,7 +99,7 @@
     src: "/tmp/rest-server_{{ _version }}_linux_amd64/rest-server"
     dest: /usr/local/bin/rest-server
     owner: root
-    group: rest-server
+    group: "{{ restic_server_group }}"
     mode: '0750'
   become: true
   notify: Restart rest-server
