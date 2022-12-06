@@ -31,7 +31,7 @@
   loop: "{{ lookup('fileglob', PASSWORD_STORE_DIR + '/IT/backup/auth/*', wantlist=true) }}"
   loop_control:
     label: "{{ item | basename | splitext | first | regex_replace('\\.', '_') }}"
-  notify: reload rest-server
+  notify: Reload rest-server
 
 - name: Ensure that rest-server loads the new .htpasswd file
   ansible.builtin.meta: flush_handlers

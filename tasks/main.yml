@@ -1,11 +1,16 @@
 ---
 
-- ansible.builtin.import_tasks: preflight.yml
+- name: Import tasks file preflight.yml
+  ansible.builtin.import_tasks: preflight.yml
 
-- ansible.builtin.import_tasks: install.yml
+- name: Import tasks file install.yml
+  ansible.builtin.import_tasks: install.yml
 
-- ansible.builtin.import_tasks: configure.yml
+- name: Import tasks file configure.yml
+  ansible.builtin.import_tasks: configure.yml
 
-- ansible.builtin.import_tasks: prepare_for_remote_clients.yml
+- name: Import tasks file prepare_for_remote_clients.yml
+  ansible.builtin.import_tasks: prepare_for_remote_clients.yml
 
-- ansible.builtin.import_tasks: add_rest_accounts.yml
+- name: Import tasks file add_rest_accounts.yml
+  ansible.builtin.import_tasks: add_rest_accounts.yml
