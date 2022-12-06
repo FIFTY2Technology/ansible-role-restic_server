@@ -9,6 +9,7 @@
     ansible.builtin.command:
       cmd: /usr/local/bin/rest-server --version
     register: _version_output
+    changed_when: false
 
   ###
   # Take care, '--version' output changed with rest-server version 0.11.0, it

@@ -68,4 +68,4 @@
     - restic-remote-exporter@.service
     - restic-remote-exporter@.timer
   notify:
-    - reload systemd
+    - Reload systemd
