@@ -1,4 +1,10 @@
 ---
 
+exclude_paths:
+  - venv
+  - fix
+  - feature
+
 skip_list:
   - experimental  # all rules tagged as experimental
+  - key-order[task]
