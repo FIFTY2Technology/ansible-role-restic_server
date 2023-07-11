@@ -14,7 +14,7 @@ ExecStart=/usr/bin/ssh \
 	-l ${SSH_USER} \
 	-R ${SSH_REMOTE_LISTEN_PORT}:localhost:{{ restic_server_listen_port }} \
 	-T \
-	/usr/bin/sudo /usr/bin/systemctl start restic-prune.service
+	/usr/bin/sudo /bin/systemctl start restic-prune.service
 
 [Install]
 WantedBy=multi-user.target

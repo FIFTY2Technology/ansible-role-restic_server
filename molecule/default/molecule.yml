@@ -4,18 +4,7 @@ dependency:
 driver:
   name: podman
 platforms:
-  - name: restic_client.debian10-default
-    image: geerlingguy/docker-debian11-ansible:latest  # debian 10 - buster
-    tmpfs:
-      - /run
-      - /tmp
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    command: /sbin/init
-    pre_build_image: true
-    privileged: true
-
-  - name: restic_client.debian11-default
+  - name: restic_server.debian11-default
     image: geerlingguy/docker-debian11-ansible:latest  # debian 11 - bullseye
     tmpfs:
       - /run
@@ -26,8 +15,8 @@ platforms:
     pre_build_image: true
     privileged: true
 
-  - name: restic_client.ubuntu1804-default
-    image: geerlingguy/docker-ubuntu1804-ansible:latest  # ubuntu 18.04 - bionic
+  - name: restic_server.debian12-default
+    image: geerlingguy/docker-debian12-ansible:latest  # debian 12 - bookworm
     tmpfs:
       - /run
       - /tmp
@@ -37,7 +26,7 @@ platforms:
     pre_build_image: true
     privileged: true
 
-  - name: restic_client.ubuntu2004-default
+  - name: restic_server.ubuntu2004-default
     image: geerlingguy/docker-ubuntu2004-ansible:latest  # ubuntu 20.04 - focal
     tmpfs:
       - /run
@@ -48,7 +37,7 @@ platforms:
     pre_build_image: true
     privileged: true
 
-  - name: restic_client.ubuntu2204-default
+  - name: restic_server.ubuntu2204-default
     image: geerlingguy/docker-ubuntu2204-ansible:latest  # ubuntu 22.04 - jammy
     tmpfs:
       - /run
@@ -59,7 +48,7 @@ platforms:
     pre_build_image: true
     privileged: true
 
-  - name: restic_client.rockylinux8-default
+  - name: restic_server.rockylinux8-default
     image: geerlingguy/docker-rockylinux8-ansible:latest  # Rocky Linux 8
     tmpfs:
       - /run
@@ -70,7 +59,7 @@ platforms:
     pre_build_image: true
     privileged: true
 
-  - name: restic_client.rockylinux9-default
+  - name: restic_server.rockylinux9-default
     image: geerlingguy/docker-rockylinux9-ansible:latest  # Rocky Linux 9
     tmpfs:
       - /run
