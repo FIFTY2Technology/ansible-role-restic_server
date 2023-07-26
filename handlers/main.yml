@@ -15,15 +15,18 @@
 - name: Reload systemd
   ansible.builtin.systemd:
     daemon-reload: true
+  become: true
 
 - name: Reload rest-server
   ansible.builtin.systemd:
     name: restic-rest-server
     enabled: true
     state: reloaded
+  become: true
 
 - name: Restart rest-server
   ansible.builtin.systemd:
     name: restic-rest-server
     enabled: true
     state: restarted
+  become: true

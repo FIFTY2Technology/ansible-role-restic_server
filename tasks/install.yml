@@ -7,6 +7,7 @@
   ansible.builtin.package:
     name: "{{ restic_server_packages }}"
     state: present
+  become: true
 
 ###
 # Group does not get created with user creation in all distributions automatically
@@ -16,6 +17,7 @@
     name: "{{ restic_server_group }}"
     system: true
     state: present
+  become: true
 
 ###
 # Creates a disabled user account (disabled: can't login via shell)
@@ -27,6 +29,7 @@
     password: '*'
     shell: /usr/sbin/nologin
     state: present
+  become: true
 
 - name: Create directory for backups
   ansible.builtin.file:
@@ -35,6 +38,7 @@
     group: "{{ restic_server_group }}"
     mode: '0700'
     state: directory
+  become: true
 
 ###
 # Install from local
