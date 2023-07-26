@@ -2,4 +2,4 @@ ansible
 ansible-lint
 yamllint
 molecule
-molecule[podman]
+molecule-podman
