@@ -9,9 +9,7 @@ This role installs `rest-server` ([see here for sourcecode](https://github.com/r
 * [pass](https://www.passwordstore.org/) installed on the Ansible runner and configured for password storage. ([See example configuration](https://www.fifty2.eu/innovation/how-we-provide-i-t-secrets-through-passwordstore-in-ansible-at-fifty2/)) Backup encryption password and REST authentication password creation are the backup client's concern (done in `restic_client` role).
 
 ## Remote backup clients
-The server is capable of connecting to restic clients via SSH if they can't reach the backup server directly, and trigger backup jobs there. This feature is described in further detail in the `restic_remote` README file.
-
-To allow the server to login on clients via SSH, it is necessary to specify the SSH public key of the server as variable `restic_remote_server_authorized_key`. The key is shown by the `Print SSH public key - See README file for usage of this key` task when running this role. This variable must be accessible to (at least) all remote backup clients (e.g. via `group_vars/remoteclients.yml`) and is necessary for the `restic_remote` role to work correctly.
+The server is capable of connecting to restic clients via SSH, if they can't reach the backup server directly, and trigger backup jobs there. This feature is described in further detail in the [`restic_remote` README](https://github.com/FIFTY2Technology/ansible-role-restic_remote/blob/main/README.md). This role configures only basic requirements for this functionality.
 
 # Role Variables
 All variables which can be overridden are stored in defaults/main.yml file as well as in table below.
