@@ -27,13 +27,6 @@
   register: _server_ssh_key
 
 ###
-# This is the tasks that is referenced in the README
-###
-- name: Print SSH public key - See README file for usage of this key
-  ansible.builtin.debug:
-    msg: "{{ _server_ssh_key.public_key }} {{ _server_ssh_key.comment }}"
-
-###
 # To let different hosts (clients) have distinct usernames to connect as (from
 # server to client), this folder will provide a systemd 'EnvironmentFile' for each
 # remote host with the respective SSH options. Variables will be consumed by all
