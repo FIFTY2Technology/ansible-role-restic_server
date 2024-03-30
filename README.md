@@ -16,7 +16,6 @@ All variables which can be overridden are stored in defaults/main.yml file as we
 
 | Name | Default value | Description |
 | ------ | ------ | ----- |
-| `backup_server` | `"{{ groups['backupservers'] \| first }}"` | Inventory hostname of the machine running the backup server (where the backup clients shall send their backup to). Used to correctly set the SSH key comment |
 | `restic_server_user` | rest-server | User to run 'rest-server' as. Will also own `restic_server_backup_path` |
 | `restic_server_group` | rest-server | Group to run 'rest-server' as. Will also own `restic_server_backup_path` |
 | `restic_server_backup_path` | /opt/restic | The directory to store all encrypted backups and the `.htaccess` file. |
@@ -48,8 +47,8 @@ Built for `rest-server` version `0.10.0` and above (relies on the `--version` op
 
   vars:
     restic_server_tls_enable: true
-    restic_server_tls_cert: "/etc/letsencrypt/live/{{ backup_server }}/fullchain.pem"
-    restic_server_tls_key: "/etc/letsencrypt/live/{{ backup_server }}/privkey.pem"
+    restic_server_tls_cert: "/etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem"
+    restic_server_tls_key: "/etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem"
 
   roles:
   - role: restic_server

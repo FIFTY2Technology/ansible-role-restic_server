@@ -19,7 +19,7 @@
 - name: Create an SSH keypair on the server
   community.crypto.openssh_keypair:
     path: "/home/{{ restic_server_user }}/.ssh/id_ed25519"
-    comment: "{{ restic_server_user }}@{{ backup_server }}"
+    comment: "{{ restic_server_user }}@{{ inventory_hostname }}"
     type: ed25519
     owner: "{{ restic_server_user }}"
     group: "{{ restic_server_group }}"

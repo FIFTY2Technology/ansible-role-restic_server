@@ -4,9 +4,6 @@
   gather_facts: true
   become: false
 
-  vars:
-    backup_server: "{{ inventory_hostname }}"
-
   tasks:
     - name: "Include ansible-role-restic_server"
       ansible.builtin.include_role:
