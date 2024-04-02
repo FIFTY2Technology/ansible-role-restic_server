@@ -11,6 +11,3 @@
 
 - name: Import tasks file prepare_for_remote_clients.yml
   ansible.builtin.import_tasks: prepare_for_remote_clients.yml
-
-- name: Import tasks file add_rest_accounts.yml
-  ansible.builtin.import_tasks: add_rest_accounts.yml

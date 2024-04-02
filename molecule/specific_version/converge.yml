@@ -4,7 +4,6 @@
   gather_facts: true
 
   vars:
-    backup_server: "{{ inventory_hostname }}"
     restic_server_version: "0.10.0"
 
   tasks:

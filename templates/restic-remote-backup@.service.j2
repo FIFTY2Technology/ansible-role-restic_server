@@ -12,6 +12,7 @@ EnvironmentFile=/etc/systemd/system/restic-remote-@.service.d/%i.env
 ExecStart=/usr/bin/ssh \
 	%i \
 	-l ${SSH_USER} \
+	-p ${SSH_PORT} \
 	-R ${SSH_REMOTE_LISTEN_PORT}:localhost:{{ restic_server_listen_port }} \
 	-T \
 	/usr/bin/sudo /bin/systemctl start restic-backup.service

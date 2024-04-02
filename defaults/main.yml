@@ -27,7 +27,10 @@ restic_server_binary_install_dir: ""
 restic_server_backup_path: /opt/restic
 
 ###
-# The default address and port for rest-server to listen for incoming clients
+# The default address and port for rest-server to listen for incoming clients.
+# If you plan to deploy 'fifty2technology.restic_remote' to clients,
+# 'restic_server_listen_port' must be defined in a place where clients can
+# read it, e.g. group_vars/all.
 ###
 restic_server_listen_address: 0.0.0.0
 restic_server_listen_port: 3000

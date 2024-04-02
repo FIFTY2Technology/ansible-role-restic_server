@@ -11,15 +11,15 @@
 
 ###
 # Make sure the backup server is prepared to connect to remote clients
-# This key is later read from the 'restic_remote_server_authorized_key' variable
-# by the 'restic_remote' role for clients to store it in their '.ssh/authorized_keys',
-# so that remote clients allow incoming SSH connections by the backup server.
-# See this role's and the 'restic_remote' role's README files for more infos.
+# This key is later read by the 'restic_remote' role for clients to store it in
+# their '.ssh/authorized_keys', so that remote clients allow incoming SSH
+# connections by the backup server.
+# See the 'fifty2technology.restic_remote' role's README files for more infos.
 ###
 - name: Create an SSH keypair on the server
   community.crypto.openssh_keypair:
     path: "/home/{{ restic_server_user }}/.ssh/id_ed25519"
-    comment: "{{ restic_server_user }}@{{ backup_server }}"
+    comment: "{{ restic_server_user }}@{{ inventory_hostname }}"
     type: ed25519
     owner: "{{ restic_server_user }}"
     group: "{{ restic_server_group }}"
@@ -27,16 +27,9 @@
   register: _server_ssh_key
 
 ###
-# This is the tasks that is referenced in the README
-###
-- name: Print SSH public key - See README file for usage of this key
-  ansible.builtin.debug:
-    msg: "{{ _server_ssh_key.public_key }} {{ _server_ssh_key.comment }}"
-
-###
 # To let different hosts (clients) have distinct usernames to connect as (from
-# server to client), this folder will provide an 'EnvironmentFile' for each
-# remote host with the respective SSH user. Variables will be consumed by all
+# server to client), this folder will provide a systemd 'EnvironmentFile' for each
+# remote host with the respective SSH options. Variables will be consumed by all
 # systemd services starting with 'restic-remote-'. The exact behaviour for
 # loading '.conf' files is described here (although we manually load '.env'
 # files instead), search for 'drop-in':
@@ -52,7 +45,18 @@
     mode: '0755'
   become: true
 
-- name: Create systemd service template for remote backup, -prune and -exporter
+###
+# Without any remote backup clients configured, these templated systemd services
+# remain without function on the server. Only if a remote backup client is
+# deployed via the 'fifty2technology.restic_remote' role, templated instances of
+# these services will get activated.
+# Templated instances are enabled and started selectively per host, depending on
+# whether the "original" service already exists on the remote client. E.g. if
+# there is no 'restic-exporter.service' found on the client, it will not activate
+# a 'restic-remote-exporter@<backup-client>.timer' on the backup server.
+# Also see 'fifty2technology.restic_remote' 'tasks/preflight.yml'.
+###
+- name: Create systemd service templates for remote backup, -prune and -exporter
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "/etc/systemd/system/{{ item }}"

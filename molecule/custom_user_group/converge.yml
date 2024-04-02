@@ -5,7 +5,6 @@
   become: false
 
   vars:
-    backup_server: "{{ inventory_hostname }}"
     restic_server_user: lololol
     restic_server_group: backup
 

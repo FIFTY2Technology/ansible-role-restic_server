@@ -11,8 +11,8 @@
 ###
 # This tasks file ensures all auth credentials in the password-store are also
 # present in the backup servers '.htpasswd' file.
-# NOTE: Creating such credentials is the concern of the 'restic_client' role
-# (for automatically installed backup clients).
+# NOTE: Creating such credentials is the concern of a custom REST repository
+# template in 'restic_client' role.
 # For machines, we use the clients hostname as username for authentication, but
 # the .htpasswd file specification does not allow dots in usernames, therefore
 # we change them to '_' here.
@@ -37,6 +37,3 @@
     label: "{{ item | basename | splitext | first | regex_replace('\\.', '_') }}"
   notify: Reload rest-server
   become: true
-
-#- name: Ensure that rest-server loads the new .htpasswd file
-#  ansible.builtin.meta: flush_handlers
