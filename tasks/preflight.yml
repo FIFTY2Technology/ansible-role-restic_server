@@ -54,7 +54,9 @@
   become: true
 
 ###
-# Only if 'restic_server_version' is set to "latest".
+# Only if we don't want to install a local file from the Ansible controller, and
+# only if 'restic_server_version' is set to "latest". Otherwise, we already know
+# what version to download.
 # Inspired by cloudalchemy.prometheus role.
 ###
 - name: Get current version from GitHub
