@@ -23,3 +23,16 @@ _restic_server_packages:
     - openssh
 
 restic_server_packages: "{{ _restic_server_packages[ansible_os_family ~ '-' ~ ansible_distribution_major_version] | default ( _restic_server_packages[ansible_os_family] ) }}"
+
+###
+# Map CPU architecture names reported by Ansible to CPU architecture names of
+# restic release assets on GitHub, e.g.:
+#   Ansible facts: "ansible_architecture": "x86_64"
+#                                           ^^^^^^
+#   rest-server project: "rest-server_0.14.0_linux_amd64.tar.gz"
+#                                                  ^^^^^
+###
+_restic_server_arch: "{{ {
+                          'x86_64': 'amd64',
+                          'aarch64': 'arm64',
+                      }.get(ansible_facts['architecture'], ansible_facts['architecture']) }}"

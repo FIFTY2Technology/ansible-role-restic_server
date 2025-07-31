@@ -65,17 +65,18 @@
         _restic_server_rest_checksums: "{{ lookup('url', 'https://github.com/restic/rest-server/releases/download/v' + _version + '/SHA256SUMS', wantlist=True) | list }}"
       run_once: true
 
-    - name: Filter for checksum of amd64 architecture
+    - name: Filter for checksum of correct architecture
       ansible.builtin.set_fact:
         _restic_server_rest_checksum: "{{ item.split(' ')[0] }}"
       with_items: "{{ _restic_server_rest_checksums }}"
       when:
-        - "'linux_amd64.tar.gz'in item"
+        - _restic_server_arch in item
+        - "'linux' in item"
 
     - name: Download rest-server binary from GitHub - version {{ _version }}
       ansible.builtin.get_url:
-        url: "https://github.com/restic/rest-server/releases/download/v{{ _version }}/rest-server_{{ _version }}_linux_amd64.tar.gz"
-        dest: "/tmp/rest-server_{{ _version }}_linux_amd64.tar.gz"
+        url: "https://github.com/restic/rest-server/releases/download/v{{ _version }}/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}.tar.gz"
+        dest: "/tmp/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}.tar.gz"
         checksum: "sha256:{{ _restic_server_rest_checksum }}"
         mode: '0640'
       register: _download_archive
@@ -87,7 +88,7 @@
 
     - name: Unpack rest-server archive
       ansible.builtin.unarchive:
-        src: "/tmp/rest-server_{{ _version }}_linux_amd64.tar.gz"
+        src: "/tmp/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}.tar.gz"
         dest: /tmp
         mode: '0755'
       notify: Clean up temporary downloads
@@ -100,7 +101,7 @@
 
 - name: Move rest-server binary into place
   ansible.builtin.copy:
-    src: "/tmp/rest-server_{{ _version }}_linux_amd64/rest-server"
+    src: "/tmp/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}/rest-server"
     dest: /usr/local/bin/rest-server
     owner: root
     group: "{{ restic_server_group }}"
