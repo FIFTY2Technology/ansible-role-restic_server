@@ -5,6 +5,54 @@
     that: ansible_service_mgr == 'systemd'
     msg: "This module only works with systemd"
 
+- name: Update package cache (Debian)
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 86400
+  become: true
+  when:
+    - "ansible_os_family == 'Debian'"
+
+###
+# See 'vars/main.yml' for package selection.
+###
+- name: Install packages for rest-server
+  ansible.builtin.package:
+    name: "{{ restic_server_packages }}"
+    state: present
+  become: true
+
+###
+# Group does not get created with user creation in all distributions automatically
+###
+- name: Create backup group
+  ansible.builtin.group:
+    name: "{{ restic_server_group }}"
+    system: true
+    state: present
+  become: true
+
+###
+# Creates a disabled user account (disabled: can't login via shell)
+###
+- name: Create backup user
+  ansible.builtin.user:
+    name: "{{ restic_server_user }}"
+    group: "{{ restic_server_group }}"
+    password: '*'
+    shell: /usr/sbin/nologin
+    state: present
+  become: true
+
+- name: Create directory for backups
+  ansible.builtin.file:
+    path: "{{ restic_server_backup_path }}"
+    owner: "{{ restic_server_user }}"
+    group: "{{ restic_server_group }}"
+    mode: '0700'
+    state: directory
+  become: true
+
 ###
 # Only if 'restic_server_version' is set to "latest".
 # Inspired by cloudalchemy.prometheus role.
@@ -32,11 +80,3 @@
   when:
     - restic_server_from_local_dir | length == 0
     - restic_server_version == 'latest'
-
-- name: Update package cache (Debian)
-  ansible.builtin.apt:
-    update_cache: true
-    cache_valid_time: 86400
-  become: true
-  when:
-    - "ansible_os_family == 'Debian'"

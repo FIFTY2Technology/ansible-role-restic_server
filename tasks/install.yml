@@ -1,46 +1,6 @@
 ---
 
 ###
-# See 'vars/main.yml' for package selection.
-###
-- name: Install packages for rest-server
-  ansible.builtin.package:
-    name: "{{ restic_server_packages }}"
-    state: present
-  become: true
-
-###
-# Group does not get created with user creation in all distributions automatically
-###
-- name: Create backup group
-  ansible.builtin.group:
-    name: "{{ restic_server_group }}"
-    system: true
-    state: present
-  become: true
-
-###
-# Creates a disabled user account (disabled: can't login via shell)
-###
-- name: Create backup user
-  ansible.builtin.user:
-    name: "{{ restic_server_user }}"
-    group: "{{ restic_server_group }}"
-    password: '*'
-    shell: /usr/sbin/nologin
-    state: present
-  become: true
-
-- name: Create directory for backups
-  ansible.builtin.file:
-    path: "{{ restic_server_backup_path }}"
-    owner: "{{ restic_server_user }}"
-    group: "{{ restic_server_group }}"
-    mode: '0700'
-    state: directory
-  become: true
-
-###
 # Install from local
 ###
 - name: Install rest-server from locally provided directory
