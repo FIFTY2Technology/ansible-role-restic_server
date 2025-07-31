@@ -20,7 +20,7 @@ restic_server_version: latest
 # Binary must be named 'rest-server' inside this directory. Will be ignored if
 # empty.
 ###
-restic_server_binary_source: ""
+restic_server_from_local_dir: ""
 
 ###
 # Directory to install 'rest-server' binary into, on target host(s).
