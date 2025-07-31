@@ -14,7 +14,7 @@
 
   - name: Get file hash of remote binary
     ansible.builtin.stat:
-      path: /usr/local/bin/rest-server
+      path: "{{ restic_server_install_dir }}/rest-server"
       checksum_algorithm: sha256
     register: _molecule_remote_bin
 

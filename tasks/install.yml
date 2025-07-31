@@ -102,7 +102,7 @@
 - name: Move rest-server binary into place
   ansible.builtin.copy:
     src: "/tmp/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}/rest-server"
-    dest: /usr/local/bin/rest-server
+    dest: "{{ restic_server_install_dir }}/rest-server"
     owner: root
     group: "{{ restic_server_group }}"
     mode: '0750'

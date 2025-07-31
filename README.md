@@ -24,7 +24,8 @@ All variables which can be overridden are stored in defaults/main.yml file as we
 | `restic_server_group` | rest-server | Group to run 'rest-server' as. Will also own `restic_server_backup_path` |
 | `restic_server_backup_path` | /opt/restic | The directory to store all encrypted backups and the `.htaccess` file. |
 | `restic_server_version` | latest | Specify a release version to download from GitHub. Release versions must not include the leading `v` as tagged on GitHub. E.g. `0.10.0`. See: https://github.com/restic/rest-server/releases Default: 'latest' |
-| `restic_server_binary_install_dir` | "" | Provide a full path to a local directory (on the Ansible controller) where the `rest-server` binary is available, e.g. for deploying self-compiled versions. Binary must be named 'rest-server' inside this directory. |
+| `restic_server_binary_source` | "" | Provide a full path to a local directory (on the Ansible controller) where the `rest-server` binary is available, e.g. for deploying self-compiled versions. Binary must be named 'rest-server' inside this directory. Will be ignored if empty. |
+| `restic_server_install_dir` | "/usr/local/bin" | Directory to install 'rest-server' binary into, on target host(s). |
 | `restic_server_listen_address` | 0.0.0.0 | The default address for rest-server to listen for incoming clients |
 | `restic_server_listen_port` | 3000 | The default port for rest-server to listen for incoming clients. If you plan to deploy `fifty2technology.restic_remote` to clients, `restic_server_listen_port` must be defined in a place where clients can read it, e.g. group_vars/all. |
 | `restic_server_tls_enable` | false | Wheather to enable TLS support or not (default: not) |

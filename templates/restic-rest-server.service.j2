@@ -10,7 +10,7 @@ After=network.target
 Type=simple
 User=rest-server
 Group=rest-server
-ExecStart=/usr/local/bin/rest-server \
+ExecStart={{ restic_server_install_dir }}/rest-server \
 		  --path {{ restic_server_backup_path }} \
 		  --listen {{ restic_server_listen_address }}:{{ restic_server_listen_port }} \
 {% if restic_server_tls_enable %}
