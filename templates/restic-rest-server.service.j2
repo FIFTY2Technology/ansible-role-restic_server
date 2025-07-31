@@ -22,7 +22,8 @@ ExecStart={{ restic_server_install_dir }}/rest-server \
 		  --prometheus
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
-RestartSec=5
+StartLimitIntervalSec=3
+StartLimitBurst=2
 
 # Optional security enhancements
 NoNewPrivileges=yes
