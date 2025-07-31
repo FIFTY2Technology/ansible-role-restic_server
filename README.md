@@ -5,7 +5,6 @@ This role installs `rest-server` ([see here for sourcecode](https://github.com/r
 * If using SSL certificates, it must exist before this role is applied (otherwise, starting the server will fail). If it is a self-signed certificate, restic clients must be run with the additional flag `--cacert` (not yet implemented).
   * SSL certificates must be accessible by user `rest-server`.
   * If no SSL certificate is used, make sure to template clients with `rest:http://`.
-* Installation is currently only supported for x86_64 architecture.
 * Installation is currently only supported on Linux distributions using systemd.
 * Depending on how you store client REST passwords, you might want to deploy those automatically.
   * REST authentication passwords are not deployed automatically to the server by this role by default.
