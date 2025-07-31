@@ -22,13 +22,13 @@
   block:
     - name: Get checksum list
       ansible.builtin.set_fact:
-        _restic_server_rest_checksums: "{{ lookup('url', 'https://github.com/restic/rest-server/releases/download/v' + _version + '/SHA256SUMS', wantlist=True) | list }}"
+        _restic_server_checksums: "{{ lookup('url', 'https://github.com/restic/rest-server/releases/download/v' + _version + '/SHA256SUMS', wantlist=True) | list }}"
       run_once: true
 
     - name: Filter for checksum of correct architecture
       ansible.builtin.set_fact:
-        _restic_server_rest_checksum: "{{ item.split(' ')[0] }}"
-      with_items: "{{ _restic_server_rest_checksums }}"
+        _restic_server_checksum: "{{ item.split(' ')[0] }}"
+      loop: "{{ _restic_server_checksums }}"
       when:
         - _restic_server_arch in item
         - "'linux' in item"
@@ -37,7 +37,7 @@
       ansible.builtin.get_url:
         url: "https://github.com/restic/rest-server/releases/download/v{{ _version }}/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}.tar.gz"
         dest: "/tmp/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}.tar.gz"
-        checksum: "sha256:{{ _restic_server_rest_checksum }}"
+        checksum: "sha256:{{ _restic_server_checksum }}"
         mode: '0640'
       register: _download_archive
       changed_when: false
