@@ -1,4 +1,5 @@
 ---
+
 - name: Converge
   hosts: all
   gather_facts: true
@@ -8,6 +9,7 @@
     restic_server_user: lololol
     restic_server_group: backup
     restic_server_version: "0.10.0"
+    restic_server_install_dir: /usr/locaaal/bin
 
   tasks:
     - name: "Include ansible-role-restic_server"

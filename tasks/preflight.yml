@@ -53,6 +53,15 @@
     state: directory
   become: true
 
+- name: Create installation directory
+  ansible.builtin.file:
+    path: "{{ restic_server_install_dir }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+  become: true
+
 ###
 # Only if we don't want to install a local file from the Ansible controller, and
 # only if 'restic_server_version' is set to "latest". Otherwise, we already know
