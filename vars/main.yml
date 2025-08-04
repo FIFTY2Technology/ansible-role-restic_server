@@ -33,5 +33,5 @@ restic_server_packages: "{{ _restic_server_packages[ansible_os_family ~ '-' ~ an
 ###
 _restic_server_arch: "{{ {
                           'x86_64': 'amd64',
-                          'aarch64': 'arm64',
+                          'aarch64': 'arm64'
                       }.get(ansible_facts['architecture'], ansible_facts['architecture']) }}"
