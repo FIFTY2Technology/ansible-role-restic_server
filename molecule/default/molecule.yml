@@ -1,4 +1,5 @@
 ---
+
 dependency:
   name: galaxy
 driver:
@@ -26,17 +27,6 @@ platforms:
     pre_build_image: true
     privileged: true
 
-  - name: restic_server.ubuntu2004-default
-    image: geerlingguy/docker-ubuntu2004-ansible:latest  # ubuntu 20.04 - focal
-    tmpfs:
-      - /run
-      - /tmp
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    command: /sbin/init
-    pre_build_image: true
-    privileged: true
-
   - name: restic_server.ubuntu2204-default
     image: geerlingguy/docker-ubuntu2204-ansible:latest  # ubuntu 22.04 - jammy
     tmpfs:
@@ -48,8 +38,8 @@ platforms:
     pre_build_image: true
     privileged: true
 
-  - name: restic_server.rockylinux8-default
-    image: geerlingguy/docker-rockylinux8-ansible:latest  # Rocky Linux 8
+  - name: restic_server.ubuntu2404-default
+    image: geerlingguy/docker-ubuntu2404-ansible:latest  # ubuntu 24.04 - noble
     tmpfs:
       - /run
       - /tmp
@@ -61,6 +51,17 @@ platforms:
 
   - name: restic_server.rockylinux9-default
     image: geerlingguy/docker-rockylinux9-ansible:latest  # Rocky Linux 9
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    command: /sbin/init
+    pre_build_image: true
+    privileged: true
+
+  - name: restic_server.rockylinux10-default
+    image: geerlingguy/docker-rockylinux10-ansible:latest  # Rocky Linux 10
     tmpfs:
       - /run
       - /tmp
