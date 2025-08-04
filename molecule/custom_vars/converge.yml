@@ -7,6 +7,7 @@
   vars:
     restic_server_user: lololol
     restic_server_group: backup
+    restic_server_version: "0.10.0"
 
   tasks:
     - name: "Include ansible-role-restic_server"
