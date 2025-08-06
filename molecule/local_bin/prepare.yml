@@ -18,6 +18,7 @@
       retries: 3
       delay: 5
       delegate_to: localhost
+      become: false
 
     - name: Unpack rest-server archive
       ansible.builtin.unarchive:
@@ -27,3 +28,4 @@
         extra_opts:
           - --strip-components=1
       delegate_to: localhost
+      become: false
