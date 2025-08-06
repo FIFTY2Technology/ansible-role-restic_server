@@ -4,6 +4,10 @@
   hosts: all
   gather_facts: false
 
+  ### needed because we don't run the whole role here, but need to know where our stuff is installed
+  vars:
+    restic_server_install_dir: /usr/local/bin
+
   tasks:
   - name: Get file hash of local binary
     ansible.builtin.stat:
