@@ -17,9 +17,15 @@ restic_server_version: latest
 ###
 # Provide a full path to a local directory (on the Ansible controller) where the
 # 'rest-server' binary is available, e.g. for deploying self-compiled versions.
-# Binary must be named 'rest-server' inside this directory.
+# Binary must be named 'rest-server' inside this directory. Will be ignored if
+# empty.
 ###
-restic_server_binary_install_dir: ""
+restic_server_from_local_dir: ""
+
+###
+# Directory to install 'rest-server' binary into, on target host(s).
+###
+restic_server_install_dir: "/usr/local/bin"
 
 ###
 # The destination path to store incoming backups and the '.htaccess' file.

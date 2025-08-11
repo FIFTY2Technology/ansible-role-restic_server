@@ -45,15 +45,15 @@
 ###
 - name: Install rest-server from locally provided directory
   ansible.builtin.copy:
-    src: "{{ restic_server_binary_install_dir }}/rest-server"
-    dest: /usr/local/bin/rest-server
+    src: "{{ restic_server_from_local_dir }}/rest-server"
+    dest: "{{ restic_server_install_dir }}/rest-server"
     owner: root
     group: "{{ restic_server_group }}"
     mode: '0750'
   become: true
   notify: Restart rest-server
   when:
-    - restic_server_binary_install_dir | length > 0
+    - restic_server_from_local_dir | length > 0
 
 ###
 # Install directly from GitHub
@@ -97,12 +97,12 @@
   vars:
     _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
   when:
-    - restic_server_binary_install_dir | length == 0
+    - restic_server_from_local_dir | length == 0
 
 - name: Move rest-server binary into place
   ansible.builtin.copy:
     src: "/tmp/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}/rest-server"
-    dest: /usr/local/bin/rest-server
+    dest: "{{ restic_server_install_dir }}/rest-server"
     owner: root
     group: "{{ restic_server_group }}"
     mode: '0750'
@@ -111,4 +111,4 @@
   vars:
     _version: "{{ _restic_server_version_available | default(restic_server_version) }}"
   when:
-    - restic_server_binary_install_dir | length == 0
+    - restic_server_from_local_dir | length == 0

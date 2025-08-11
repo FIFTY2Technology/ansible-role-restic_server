@@ -4,18 +4,19 @@
 - name: Verify
   hosts: all
   gather_facts: false
-  tasks:
-  - name: Get rest-server version output
-    ansible.builtin.command:
-      cmd: /usr/local/bin/rest-server --version
-    register: _version_output
-    changed_when: false
 
-  ###
-  # Take care, '--version' output changed with rest-server version 0.11.0, it
-  # would be "split(' ')[3]" then.
-  ###
-  - name: Assert correct output
-    ansible.builtin.assert:
-      that:
-        - "_version_output.stdout.split(' ')[1] == '0.10.0'"
+  tasks:
+    - name: Get rest-server version output
+      ansible.builtin.command:
+        cmd: "{{ restic_server_install_dir }}/rest-server --version"
+      register: _version_output
+      changed_when: false
+
+    ###
+    # Take care, '--version' output changed with rest-server version 0.11.0, it
+    # would be "split(' ')[3]" then.
+    ###
+    - name: Assert correct output
+      ansible.builtin.assert:
+        that:
+          - "_version_output.stdout.split(' ')[1] == '0.10.0'"

@@ -30,7 +30,7 @@
       ansible.builtin.set_fact:
         _restic_server_version_available: "{{ _latest_release.json.tag_name[1:] }}"
   when:
-    - restic_server_binary_install_dir | length == 0
+    - restic_server_from_local_dir | length == 0
     - restic_server_version == 'latest'
 
 - name: Update package cache (Debian)
