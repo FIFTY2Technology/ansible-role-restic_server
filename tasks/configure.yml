@@ -11,3 +11,14 @@
     - Reload systemd
     - Restart rest-server
   become: true
+
+- name: Create .htpasswd file
+  ansible.builtin.file:
+    path: "{{ restic_server_backup_path }}/.htpasswd"
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+    owner: "{{ restic_server_user }}"
+    group: "{{ restic_server_group }}"
+    mode: '0600'
+  become: true

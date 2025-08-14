@@ -1,9 +1,11 @@
 ---
-# This is an example playbook to execute Ansible tests.
 
 - name: Verify
   hosts: all
   gather_facts: false
+
+  vars:
+    restic_server_install_dir: /usr/locaaal/bin
 
   tasks:
     - name: Get rest-server version output

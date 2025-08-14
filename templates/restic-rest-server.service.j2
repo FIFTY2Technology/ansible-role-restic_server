@@ -8,8 +8,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=rest-server
-Group=rest-server
+User={{ restic_server_user }}
+Group={{ restic_server_group }}
 ExecStart={{ restic_server_install_dir }}/rest-server \
 		  --path {{ restic_server_backup_path }} \
 		  --listen {{ restic_server_listen_address }}:{{ restic_server_listen_port }} \
@@ -22,7 +22,8 @@ ExecStart={{ restic_server_install_dir }}/rest-server \
 		  --prometheus
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
-RestartSec=5
+StartLimitIntervalSec=3
+StartLimitBurst=2
 
 # Optional security enhancements
 NoNewPrivileges=yes

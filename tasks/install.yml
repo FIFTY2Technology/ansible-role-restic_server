@@ -1,46 +1,6 @@
 ---
 
 ###
-# See 'vars/main.yml' for package selection.
-###
-- name: Install packages for rest-server
-  ansible.builtin.package:
-    name: "{{ restic_server_packages }}"
-    state: present
-  become: true
-
-###
-# Group does not get created with user creation in all distributions automatically
-###
-- name: Create backup group
-  ansible.builtin.group:
-    name: "{{ restic_server_group }}"
-    system: true
-    state: present
-  become: true
-
-###
-# Creates a disabled user account (disabled: can't login via shell)
-###
-- name: Create backup user
-  ansible.builtin.user:
-    name: "{{ restic_server_user }}"
-    group: "{{ restic_server_group }}"
-    password: '*'
-    shell: /usr/sbin/nologin
-    state: present
-  become: true
-
-- name: Create directory for backups
-  ansible.builtin.file:
-    path: "{{ restic_server_backup_path }}"
-    owner: "{{ restic_server_user }}"
-    group: "{{ restic_server_group }}"
-    mode: '0700'
-    state: directory
-  become: true
-
-###
 # Install from local
 ###
 - name: Install rest-server from locally provided directory
@@ -62,13 +22,13 @@
   block:
     - name: Get checksum list
       ansible.builtin.set_fact:
-        _restic_server_rest_checksums: "{{ lookup('url', 'https://github.com/restic/rest-server/releases/download/v' + _version + '/SHA256SUMS', wantlist=True) | list }}"
+        _restic_server_checksums: "{{ lookup('url', 'https://github.com/restic/rest-server/releases/download/v' + _version + '/SHA256SUMS', wantlist=True) | list }}"
       run_once: true
 
     - name: Filter for checksum of correct architecture
       ansible.builtin.set_fact:
-        _restic_server_rest_checksum: "{{ item.split(' ')[0] }}"
-      with_items: "{{ _restic_server_rest_checksums }}"
+        _restic_server_checksum: "{{ item.split(' ')[0] }}"
+      loop: "{{ _restic_server_checksums }}"
       when:
         - _restic_server_arch in item
         - "'linux' in item"
@@ -77,7 +37,7 @@
       ansible.builtin.get_url:
         url: "https://github.com/restic/rest-server/releases/download/v{{ _version }}/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}.tar.gz"
         dest: "/tmp/rest-server_{{ _version }}_linux_{{ _restic_server_arch }}.tar.gz"
-        checksum: "sha256:{{ _restic_server_rest_checksum }}"
+        checksum: "sha256:{{ _restic_server_checksum }}"
         mode: '0640'
       register: _download_archive
       changed_when: false

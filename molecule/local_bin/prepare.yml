@@ -2,16 +2,9 @@
 
 - name: Prepare
   hosts: all
-  gather_facts: true
+  gather_facts: false
 
   tasks:
-    - name: Force update package cache (Debian)
-      ansible.builtin.apt:
-        update_cache: true
-      become: true
-      when:
-        - "ansible_os_family == 'Debian'"
-
     ###
     # Fake an installation from a local directory
     ###
@@ -25,6 +18,7 @@
       retries: 3
       delay: 5
       delegate_to: localhost
+      become: false
 
     - name: Unpack rest-server archive
       ansible.builtin.unarchive:
@@ -34,3 +28,4 @@
         extra_opts:
           - --strip-components=1
       delegate_to: localhost
+      become: false

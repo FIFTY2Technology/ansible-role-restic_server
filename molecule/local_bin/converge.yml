@@ -3,7 +3,7 @@
   hosts: all
 
   vars:
-    restic_server_local_bin_dir: /tmp
+    restic_server_from_local_dir: /tmp
 
   tasks:
     - name: "Include fifty2technology.restic_server"
