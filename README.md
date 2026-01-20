@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project has been moved to https://api.fifty2.eu/public_projects/ansible-role-restic_server
+
 # Description
 This role installs `rest-server` ([see here for sourcecode](https://github.com/restic/rest-server)), an HTTP REST server for restic clients with additional authentication and TLS support. All users from the password-store are registered in the `.htpasswd` file (append only so far).
 
